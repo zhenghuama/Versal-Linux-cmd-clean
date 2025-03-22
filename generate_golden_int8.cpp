@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
-#include "../src/kernels/include.h"
+#include "aie/kernels/include.h"
 
 
 
@@ -32,15 +32,15 @@ int main(){
 
 
 	for (int i = 0; i < mult_X * mult_Y; i++){
-		a_file_array[i].open("./matA" + std::to_string(i) + ".txt", std::ios::out);
+		a_file_array[i].open("./data/matA" + std::to_string(i) + ".txt", std::ios::out);
 	}
 
 	for (int i = 0; i < mult_Y * mult_Z; i++){
-		b_file_array[i].open("./matB" + std::to_string(i) + ".txt", std::ios::out);
+		b_file_array[i].open("./data/matB" + std::to_string(i) + ".txt", std::ios::out);
 	}
 
 	for (int i = 0; i < mult_X * mult_Z; i++){
-		c_file_array[i].open("./matC" + std::to_string(i) + ".txt", std::ios::out);
+		c_file_array[i].open("./data/matC" + std::to_string(i) + ".txt", std::ios::out);
 	}
 
 

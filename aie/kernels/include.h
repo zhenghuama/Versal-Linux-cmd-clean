@@ -13,14 +13,23 @@
 
 
 // single kernel dimensions (MxKxN on manuscript)
-#define single_M 8
-#define single_K 16
-#define single_N 8
+#define single_M 2
+#define single_K 32
+#define single_N 16
 
 
 // AI Engine API dimensions
-#define M_API 4
-#define K_API 8
-#define N_API 4
+#define M_API 1
+#define K_API 16
+#define N_API 8
+
+// INT8 sizes
+// 4x8x4
+// 4x16x4
+// 8x8x4
+// 2x8x8
+// 4x8x8
+// 2x16x8
+// 4x16x8
 
 #endif
