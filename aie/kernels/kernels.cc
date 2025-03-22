@@ -40,7 +40,7 @@ void opt_blocked_matrix_mult(input_window_int8 * __restrict matA, input_window_i
 //	aie::tile tile = aie::tile::current();
 //	cycle_num[0] = tile.cycles();
 
-	printf("Starting...");
+	// printf("Starting...");
 	// unroll the loops for more optimization
 	for (unsigned i = 0; i < (single_M/M_API); i+=2)
 //		chess_prepare_for_pipelining
@@ -106,7 +106,7 @@ void opt_blocked_matrix_mult(input_window_int8 * __restrict matA, input_window_i
 
 
 		}
-		printf("chkpt %d\n", i);
+		// printf("chkpt %d\n", i);
 
 	}
 //	cycle_num[1] = tile.cycles();
