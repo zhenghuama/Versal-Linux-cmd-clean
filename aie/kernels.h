@@ -1,23 +1,12 @@
-/*
-Copyright (C) 2023, Advanced Micro Devices, Inc. All rights reserved.
-SPDX-License-Identifier: X11
-*/
 
-#ifndef __KERNELS_H__
-#define __KERNELS_H__
+#ifndef FUNCTION_KERNELS_H
+#define FUNCTION_KERNELS_H
 
-#include <adf.h>
-#include <aie_api/aie.hpp>
-using namespace adf;
+	void opt_blocked_matrix_mult(input_window_int8 * __restrict matA, input_window_int8 * __restrict matB,
+						output_window_int32 * __restrict matC);
 
-  void classifier(input_stream_cint16 * input, 
-                  output_buffer<int32> & __restrict output);
+	void vectorized_add(input_window_int32 * __restrict in_1, input_window_int32 * __restrict in_2,
+							output_window_int32 * __restrict out);
 
-  void fir_27t_sym_hb_2i(       
-	input_buffer<cint16,adf::extents<adf::inherited_extent>,adf::margin<INTERPOLATOR27_COEFFICIENTS>>  & __restrict cb_input,
-	output_buffer<cint16> & __restrict cb_output);
 
-  void polar_clip(input_stream_cint16* in, 
-                  output_stream_cint16 *out);
-
-#endif /**********__KERNELS_H__**********/
+#endif
