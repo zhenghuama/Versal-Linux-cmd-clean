@@ -87,7 +87,7 @@ endif
 LDCLFLAGS := $(GCC_LIB)
 
 .ONESHELL:
-.PHONY: clean all kernels aie sim xsa host package run_emu
+.PHONY: clean all kernels aie sim xsa host package run_emu analyze run_sim
 
 ###
 # Guarding Checks. Do not modify.
@@ -141,6 +141,11 @@ aie: $(GRAPH_O)
 
 #AIE or X86 Simulation
 sim: $(GRAPH_O)
+
+run_sim: aie sim
+
+analyze: run_sim
+	vitis_analyzer -a aiesimulator_output/default.aierun_summary
      
 ifeq ($(TARGET),sw_emu)
 	$(X86SIM) --pkg-dir=./Work
