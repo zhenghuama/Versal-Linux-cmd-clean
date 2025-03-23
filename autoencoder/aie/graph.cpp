@@ -1,11 +1,14 @@
 
 #include <adf.h>
-#include "kernels.h"
+#include "autoenc.h"
 #include <vector>
 
-#include <adf.h>
-#include "kernels.h"
-#include "kernels/include.h"
+#define mult_X 1
+#define mult_Y 1 // Has to be 4 for pattern 1, 3 for pattern 2
+#define mult_Z 1
+#define single_M 8
+#define single_K 16
+#define single_N 8
 
 using namespace adf;
 
@@ -38,7 +41,7 @@ public:
 
 	  // direct the source file of kernels
 	  for (int i = 0; i < mult_Y * mult_X * mult_Z; i++){
-		  source(mat_mul_k[i]) = "kernels/kernels.cc";
+		  source(mat_mul_k[i]) = "autoenc.cc";
 	  }
 
 	  runtime<ratio>(mat_mul_k[0]) = 1.0;

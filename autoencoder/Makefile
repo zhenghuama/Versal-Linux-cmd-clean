@@ -46,7 +46,7 @@ X86SIM := x86simulator
 SW_EMU_CMD := ./host_ps_on_x86 a.xclbin
 HW_EMU_CMD := ./launch_hw_emu.sh -aie-sim-options ../aiesimulator_output/aiesim_options.txt -add-env AIE_COMPILER_WORKDIR=../Work 
 
-AIE_INCLUDE_FLAGS := --include "$(XILINX_VITIS)/aietools/include" --include "./aie" --include "./data" --include "./aie/kernels" --include "./" --aie.xlopt=0
+AIE_INCLUDE_FLAGS := --include "$(XILINX_VITIS)/aietools/include" --include "./aie" --include "./data" --include "./" --aie.xlopt=0
 AIE_FLAGS := $(AIE_INCLUDE_FLAGS) --platform $(BASE_PLATFORM) --work_dir ./Work
 
 ifeq ($(TARGET),sw_emu)
@@ -154,7 +154,7 @@ run_sim: golden aie sim
 analyze: run_sim
 	vitis_analyzer -a aiesimulator_output/default.aierun_summary
 
-golden: generate_golden_int8.cpp aie/kernels/include.h
+golden: generate_golden_int8.cpp
 	mkdir -p data
 	g++ -o generate_golden_int8.exe generate_golden_int8.cpp
 	./generate_golden_int8.exe
