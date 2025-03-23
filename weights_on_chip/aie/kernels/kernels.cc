@@ -4,7 +4,7 @@
 #include "include.h"
 #include "../../data/matB0.h"
 
-void opt_blocked_matrix_mult(input_window_int8 * __restrict matA,
+void gemm(input_window_int8 * __restrict matA,
 						output_window_int32 * __restrict matC) {
 
 	// change M_API, K_API, N_API at include.h, based on AI Engine API

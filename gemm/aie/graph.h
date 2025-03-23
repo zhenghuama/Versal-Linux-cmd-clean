@@ -37,7 +37,7 @@ public:
 
 	  // kernels creation
 	  for (int i = 0; i < mult_Y * mult_X * mult_Z; i++){
-		  mat_mul_k[i] = kernel::create(opt_blocked_matrix_mult);
+		  mat_mul_k[i] = kernel::create(gemm);
 	  }
 
 	  // Single kernel connections

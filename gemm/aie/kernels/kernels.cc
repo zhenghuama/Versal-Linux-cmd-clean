@@ -21,7 +21,7 @@
  */
 
 // optimized matrix multiplication kernel
-void opt_blocked_matrix_mult(input_window_int8 * __restrict matA, input_window_int8 * __restrict matB,
+void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict matB,
 						output_window_int32 * __restrict matC) {
 
 

@@ -1,33 +1,24 @@
 #include <adf.h>
 #include "aie_api/aie.hpp"
 #include "aie_api/aie_adf.hpp"
-#include "include.h"
-#include "../../data/matA0.h"
+#include "../../data/matB0.h"
 
 template <int M_API, int K_API, int N_API, int single_M, int single_K, int single_N, int SHIFT>
 void gemm(
-	input_window_int8 * __restrict matB,
+	input_window_int8 * __restrict matA,
 	output_window_int32 * __restrict matC) {
 
-	// change M_API, K_API, N_API at include.h, based on AI Engine API
 	using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
 
 	// pointers of matrices
-	const int8* __restrict pA = (int8*) matA;
-	const int8* __restrict pB = (int8*) matB->ptr;
+	const int8* __restrict pA = (int8*) matA->ptr;
+	const int8* __restrict pB = (int8*) matB;
 	int32* __restrict pC = (int32*) matC->ptr;
 
-//	// for profiling
-//	unsigned long long cycle_num[2];
-//	aie::tile tile = aie::tile::current();
-//	cycle_num[0] = tile.cycles();
-
-	// printf("Starting...");
 	// unroll the loops for more optimization
 	for (unsigned i = 0; i < (single_M/M_API); i+=2)
 //		chess_prepare_for_pipelining
 		chess_flatten_loop
-
 	{
 
 		int32 * __restrict pC1 = pC + (i * (single_N/N_API)) * MMUL::size_C;
@@ -37,9 +28,7 @@ void gemm(
 		chess_flatten_loop
 //		chess_prepare_for_pipelining
 //		Just write it this way, don't question it, or it won't scheudle at every clk.
-
 		{
-
 			const int8 * __restrict pA1 = pA + ( i * (single_K/K_API) + 0) * MMUL::size_A;
 			const int8 * __restrict pA2 = pA + ( (i+1) * (single_K/K_API) + 0) * MMUL::size_A;
 
@@ -80,21 +69,16 @@ void gemm(
 				C10.mac(A1, B0);
 				C11.mac(A1, B1);
 			}
-
 			aie::store_v(pC1, C00.template to_vector<int32>(SHIFT)); pC1 +=MMUL::size_C;
 			aie::store_v(pC1, C01.template to_vector<int32>(SHIFT)); pC1 +=MMUL::size_C;
 			aie::store_v(pC2, C10.template to_vector<int32>(SHIFT)); pC2 +=MMUL::size_C;
 			aie::store_v(pC2, C11.template to_vector<int32>(SHIFT)); pC2 +=MMUL::size_C;
-
-
 		}
-		// printf("chkpt %d\n", i);
-
 	}
-//	cycle_num[1] = tile.cycles();
-//	printf("start=%llu, end=%llu, Kernel clock cycles=%llu\n", cycle_num[0], cycle_num[1], (cycle_num[1] - cycle_num[0]));
-
-
 }
 
-
+void gemm_4x8x4_8x16x8_0(
+	input_window_int8 * __restrict matA,
+	output_window_int32 * __restrict matC) {
+		gemm<4,8,4, 8,16,8, 0>(matA,matC);
+	}
