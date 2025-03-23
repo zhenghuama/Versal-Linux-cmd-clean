@@ -7,6 +7,11 @@
 #include "kernels.h"
 #include "kernels/include.h"
 
+void gemm_4_8_4__8_16_8_0 (input_window_int8 * __restrict matB,
+	output_window_int32 * __restrict matC) {
+		gemm<4,8,4, 8,16,8, 0>(matB, matC);
+	}
+
 using namespace adf;
 
 class simpleGraph : public adf::graph {
@@ -29,7 +34,7 @@ public:
 
 	  // kernels creation
 	  for (int i = 0; i < mult_Y * mult_X * mult_Z; i++){
-		  mat_mul_k[i] = kernel::create(opt_blocked_matrix_mult);
+		  mat_mul_k[i] = kernel::create(gemm_4_8_4__8_16_8_0);
 	  }
 
 	  // Single kernel connections

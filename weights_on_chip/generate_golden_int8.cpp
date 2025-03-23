@@ -30,11 +30,11 @@ int main(){
 
 
 	for (int i = 0; i < mult_X * mult_Y; i++){
-		a_file_array[i].open("./data/matA" + std::to_string(i) + ".h", std::ios::out);
+		a_file_array[i].open("./data/matA" + std::to_string(i) + ".txt", std::ios::out);
 	}
 
 	for (int i = 0; i < mult_Y * mult_Z; i++){
-		b_file_array[i].open("./data/matB" + std::to_string(i) + ".txt", std::ios::out);
+		b_file_array[i].open("./data/matB" + std::to_string(i) + ".h", std::ios::out);
 	}
 
 	for (int i = 0; i < mult_X * mult_Z; i++){
@@ -42,63 +42,61 @@ int main(){
 	}
 
 
-	// seed
-	srand(time(NULL));
+	// B matrix
+	for (int yz = 0; yz < mult_Y * mult_Z; yz++){
 
+		// generate matB in blocked format
+		for (int k = 0; k < single_K/K_API; k++){
+			for (int j = 0; j < single_N/N_API; j++){
 
-	// A matrix
-	for (int xy = 0; xy < mult_X * mult_Y; xy++){
+				for (int k_a = 0; k_a < K_API; k_a++){
+					for (int n_a = 0; n_a < N_API; n_a++){
 
-		// generate matA in blocked format
-		for (int i = 0; i < single_M/M_API; i++){
-			for (int k = 0; k < single_K/K_API; k++){
-
-				for (int m_a = 0; m_a < M_API; m_a++){
-					for (int k_a = 0; k_a < K_API; k_a++){
-
-						matA[i*(single_K/K_API)*M_API*K_API + k*M_API*K_API + m_a*K_API + k_a][xy] = rand()%128;
+						matB[k*(single_N/N_API)*K_API*N_API + j*K_API*N_API + k_a*N_API + n_a][yz] = rand()%128;
 					}
 				}
 			}
 		}
-
-		// write matA to matA.h
-		a_file_array[xy] << "alignas(32) const signed char matA[" << int(single_M*single_K) << "] = { ";
-		for (int i = 0; i < single_M*single_K; i++){
-			a_file_array[xy] << int(matA[i][xy]);
-			if (i == single_M*single_K-1) a_file_array[xy] << "};";
-			else                          a_file_array[xy] << ", ";
+		// write matB to matB.h
+		b_file_array[yz] << "alignas(32) const signed char matB[" << int(single_K*single_N) << "] = { ";
+		for (int i = 0; i < single_K*single_N; i++){
+			b_file_array[yz] << int(matB[i][yz]);
+			if (i == single_K*single_N-1) b_file_array[yz] << "};";
+			else                          b_file_array[yz] << ", ";
 		}
 	}
+
+	// seed
+	srand(time(NULL));
 
 
 	for (int batch = 0; batch < 10; batch++){
 
-		// B matrix
-		for (int yz = 0; yz < mult_Y * mult_Z; yz++){
+		// A matrix
+		for (int xy = 0; xy < mult_X * mult_Y; xy++){
 
-			// generate matB in blocked format
-			for (int k = 0; k < single_K/K_API; k++){
-				for (int j = 0; j < single_N/N_API; j++){
+			// generate matA in blocked format
+			for (int i = 0; i < single_M/M_API; i++){
+				for (int k = 0; k < single_K/K_API; k++){
 
-					for (int k_a = 0; k_a < K_API; k_a++){
-						for (int n_a = 0; n_a < N_API; n_a++){
+					for (int m_a = 0; m_a < M_API; m_a++){
+						for (int k_a = 0; k_a < K_API; k_a++){
 
-							matB[k*(single_N/N_API)*K_API*N_API + j*K_API*N_API + k_a*N_API + n_a][yz] = rand()%128;
+							matA[i*(single_K/K_API)*M_API*K_API + k*M_API*K_API + m_a*K_API + k_a][xy] = rand()%128;
 						}
 					}
 				}
 			}
 
 			// write matB to matB.txt
-			for (int i = 0; i < single_K*single_N; i++){
+			for (int i = 0; i < single_M*single_K; i++){
 
-				b_file_array[yz] << int(matB[i][yz]);
+				a_file_array[xy] << int(matA[i][xy]);
 				if (i % 16 == 15){
-					b_file_array[yz] << "\n";
+					a_file_array[xy] << "\n";
 				}
 				else{
-					b_file_array[yz] << " ";
+					a_file_array[xy] << " ";
 				}
 			}
 		}

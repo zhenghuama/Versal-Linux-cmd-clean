@@ -2,17 +2,17 @@
 #include "aie_api/aie.hpp"
 #include "aie_api/aie_adf.hpp"
 #include "include.h"
-#include "../../data/matA0.h"
+#include "../../data/matB0.h"
 
-void opt_blocked_matrix_mult(input_window_int8 * __restrict matB,
+void opt_blocked_matrix_mult(input_window_int8 * __restrict matA,
 						output_window_int32 * __restrict matC) {
 
 	// change M_API, K_API, N_API at include.h, based on AI Engine API
 	using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
 
 	// pointers of matrices
-	const int8* __restrict pA = (int8*) matA;
-	const int8* __restrict pB = (int8*) matB->ptr;
+	const int8* __restrict pA = (int8*) matA->ptr;
+	const int8* __restrict pB = (int8*) matB;
 	int32* __restrict pC = (int32*) matC->ptr;
 
 //	// for profiling
@@ -86,42 +86,5 @@ void opt_blocked_matrix_mult(input_window_int8 * __restrict matB,
 
 
 		}
-		// printf("chkpt %d\n", i);
-
 	}
-//	cycle_num[1] = tile.cycles();
-//	printf("start=%llu, end=%llu, Kernel clock cycles=%llu\n", cycle_num[0], cycle_num[1], (cycle_num[1] - cycle_num[0]));
-
-
-}
-
-
-void vectorized_add(input_window_int32 * __restrict in_1, input_window_int32 * __restrict in_2,
-						output_window_int32 * __restrict out) {
-
-//	// for profiling
-//	unsigned long long cycle_num[2];
-//	aie::tile tile = aie::tile::current();
-//	cycle_num[0] = tile.cycles();
-
-	for (unsigned i=0; i<(single_M*single_N/8); i++)
-//	chess_prepare_for_pipelining
-	chess_flatten_loop
-
-	{
-
-		// load
-		aie::vector<int32, 8> v_a = window_readincr_v<8>(in_1);
-		aie::vector<int32, 8> v_b = window_readincr_v<8>(in_2);
-
-
-		// compute
-		aie::vector<int32, 8> v_c = aie::add(v_a, v_b);
-
-		// store
-		window_writeincr(out, v_c);
-	}
-
-//	cycle_num[1] = tile.cycles();
-//	printf("start=%llu, end=%llu, Kernel clock cycles=%llu\n", cycle_num[0], cycle_num[1], (cycle_num[1] - cycle_num[0]));
 }
