@@ -2,17 +2,17 @@
 #include "aie_api/aie.hpp"
 #include "aie_api/aie_adf.hpp"
 #include "include.h"
-#include "../../data/matA0.h"
+#include "../../data/matB0.h"
 
-void opt_blocked_matrix_mult(input_window_int8 * __restrict matB,
+void opt_blocked_matrix_mult(input_window_int8 * __restrict matA,
 						output_window_int32 * __restrict matC) {
 
 	// change M_API, K_API, N_API at include.h, based on AI Engine API
 	using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
 
 	// pointers of matrices
-	const int8* __restrict pA = (int8*) matA;
-	const int8* __restrict pB = (int8*) matB->ptr;
+	const int8* __restrict pA = (int8*) matA->ptr;
+	const int8* __restrict pB = (int8*) matB;
 	int32* __restrict pC = (int32*) matC->ptr;
 
 //	// for profiling

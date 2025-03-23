@@ -14,13 +14,13 @@ private:
   kernel mat_mul_k[mult_Y * mult_X * mult_Z];
 
 public:
-  input_plio  B[mult_Y * mult_Z];
+  input_plio  A[mult_X * mult_Y];
   output_plio C[mult_X * mult_Z];
 
   simpleGraph(){
 
-	  for (int i = 0; i < mult_Y * mult_Z; i++){
-		  B[i] = input_plio::create(plio_128_bits, "data/matB" + std::to_string(i) + ".txt");
+	  for (int i = 0; i < mult_X * mult_Y; i++){
+		  A[i] = input_plio::create(plio_128_bits, "data/matA" + std::to_string(i) + ".txt");
 	  }
 
 	  for (int i = 0; i < mult_X * mult_Z; i++){
@@ -33,7 +33,7 @@ public:
 	  }
 
 	  // Single kernel connections
-	  connect< window<single_K*single_N*1> >  (B[0].out[0], mat_mul_k[0].in[0]);
+	  connect< window<single_K*single_N*1> >  (A[0].out[0], mat_mul_k[0].in[0]);
 	  connect< window<single_M*single_N*4> >  (mat_mul_k[0].out[0], C[0].in[0]);
 
 	  // direct the source file of kernels
