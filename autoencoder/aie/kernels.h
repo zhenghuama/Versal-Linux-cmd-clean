@@ -5,19 +5,19 @@
 #include <adf.h>
 #include "aie_api/aie.hpp"
 #include "aie_api/aie_adf.hpp"
-#include "../data/matB0.h"
+
 
 template <int M_API, int K_API, int N_API, int single_M, int single_K, int single_N, int SHIFT>
 void gemm(
 	input_window_int8 * __restrict matA,
-	output_window_int32 * __restrict matC) {
+	output_window_int8 * __restrict matC, const int8 matB []) {
 
 	using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
 
 	// pointers of matrices
 	const int8* __restrict pA = (int8*) matA->ptr;
 	const int8* __restrict pB = (int8*) matB;
-	int32* __restrict pC = (int32*) matC->ptr;
+	int8* __restrict pC = (int8*) matC->ptr;
 
 	// unroll the loops for more optimization
 	for (unsigned i = 0; i < (single_M/M_API); i+=2)
@@ -25,8 +25,8 @@ void gemm(
 		chess_flatten_loop
 	{
 
-		int32 * __restrict pC1 = pC + (i * (single_N/N_API)) * MMUL::size_C;
-		int32 * __restrict pC2 = pC + ((i+1) * (single_N/N_API)) * MMUL::size_C;;
+		int8 * __restrict pC1 = pC + (i * (single_N/N_API)) * MMUL::size_C;
+		int8 * __restrict pC2 = pC + ((i+1) * (single_N/N_API)) * MMUL::size_C;;
 
 		for (unsigned j = 0; j < (single_N/N_API); j+=2)
 		chess_flatten_loop
@@ -73,10 +73,25 @@ void gemm(
 				C10.mac(A1, B0);
 				C11.mac(A1, B1);
 			}
-			aie::store_v(pC1, C00.template to_vector<int32>(SHIFT)); pC1 +=MMUL::size_C;
-			aie::store_v(pC1, C01.template to_vector<int32>(SHIFT)); pC1 +=MMUL::size_C;
-			aie::store_v(pC2, C10.template to_vector<int32>(SHIFT)); pC2 +=MMUL::size_C;
-			aie::store_v(pC2, C11.template to_vector<int32>(SHIFT)); pC2 +=MMUL::size_C;
+			auto C00_i8 = C00.template to_vector<int8>(SHIFT);
+      auto C01_i8 = C01.template to_vector<int8>(SHIFT);
+      auto C10_i8 = C10.template to_vector<int8>(SHIFT);
+      auto C11_i8 = C11.template to_vector<int8>(SHIFT);
+
+      auto C00_relu = aie::max(C00_i8, (int8)0); 
+      auto C01_relu = aie::max(C01_i8, (int8)0); 
+      auto C10_relu = aie::max(C10_i8, (int8)0); 
+      auto C11_relu = aie::max(C11_i8, (int8)0); 
+
+			aie::store_v(pC1, C00_relu); pC1 +=MMUL::size_C;
+			aie::store_v(pC1, C01_relu); pC1 +=MMUL::size_C;
+			aie::store_v(pC2, C10_relu); pC2 +=MMUL::size_C;
+			aie::store_v(pC2, C11_relu); pC2 +=MMUL::size_C;
+
+			// aie::store_v(pC1, C00.template to_vector<int8>(SHIFT)); pC1 +=MMUL::size_C;
+			// aie::store_v(pC1, C01.template to_vector<int8>(SHIFT)); pC1 +=MMUL::size_C;
+			// aie::store_v(pC2, C10.template to_vector<int8>(SHIFT)); pC2 +=MMUL::size_C;
+			// aie::store_v(pC2, C11.template to_vector<int8>(SHIFT)); pC2 +=MMUL::size_C;
 		}
 	}
 }

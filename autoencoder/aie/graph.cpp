@@ -27,7 +27,7 @@ public:
 
 	  // Single kernel connections
 	  connect< window<single_K*single_N*1> >  (A.out[0], layer0.in[0]);
-	  connect< window<single_M*single_N*4> >  (layer0.out[0], C.in[0]);
+	  connect< window<single_M*single_N*1> >  (layer0.out[0], C.in[0]);
 
 	  // direct the source file of kernels
 		source(layer0) = "autoenc.cc";

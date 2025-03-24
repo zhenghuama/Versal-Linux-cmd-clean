@@ -65,7 +65,7 @@ int main(){
 				for (int k_a = 0; k_a < K_API; k_a++){
 					for (int n_a = 0; n_a < N_API; n_a++){
 
-						matB[k*(single_N/N_API)*K_API*N_API + j*K_API*N_API + k_a*N_API + n_a][yz] = rand()%128;
+						matB[k*(single_N/N_API)*K_API*N_API + j*K_API*N_API + k_a*N_API + n_a][yz] = (rand()-128)%256;
 					}
 				}
 			}
@@ -175,8 +175,8 @@ int main(){
 			// write to output after elementwise addition
 			for (int i = 0; i < single_M*single_N; i++){
 
-				c_file_array[xz] << int(matC[i][xz]);
-				if (i % 4 == 3){
+				c_file_array[xz] << int(std::max((int8_t)(matC[i][xz]), (int8_t)0));
+				if (i % 16 == 15){
 					c_file_array[xz] << "\n";
 				}
 				else{
