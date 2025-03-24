@@ -10,7 +10,7 @@
 template <int M_API, int K_API, int N_API, int single_M, int single_K, int single_N, int SHIFT>
 void gemm(
 	input_window_int8 * __restrict matA,
-	output_window_int8 * __restrict matC, int8 matB []) {
+	output_window_int8 * __restrict matC, const int8 matB []) {
 
 	using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
 

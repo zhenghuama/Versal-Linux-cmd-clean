@@ -13,11 +13,21 @@
 // 2x16x8
 // 4x16x8
 
-void gemm_4x8x4_8x16x8_0(input_window_int8 * __restrict matA,	output_window_int8 * __restrict matC) {
-    int8 matB [16*8];
-		gemm<4,8,4, 8,16,8, 0>(matA,matC, matB);
+// Autoencoder: 
+// https://github.com/mlcommons/tiny/blob/master/benchmark/training/anomaly_detection/keras_model.py
+// the model based on the simple dense auto encoder 
+// (128*128*128*128*8*128*128*128*128)
+
+// Batch size = 2
+// (Batch, Input, Output)
+
+#define N 2
+
+const int8 matB0 [128*128] = {5};
+void f0(input_window_int8 * __restrict matA,	output_window_int8 * __restrict matC) {
+		gemm<2,16,8, N,128,128, 0>(matA,matC, matB0);
 	}
-void gemm_4x8x4_8x8x16_0(input_window_int8 * __restrict matA, output_window_int8 * __restrict matC) {
-    int8 matB [8*16];
-		gemm<4,8,4, 8,8,16, 0>(matA,matC, matB);
+const int8 matB1 [128*128] = {10};
+  void f1(input_window_int8 * __restrict matA,	output_window_int8 * __restrict matC) {
+		gemm<2,16,8, N,128,128, 0>(matA,matC, matB1);
 	}
