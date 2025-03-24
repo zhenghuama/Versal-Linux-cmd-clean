@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Define arrays with given values
 M_vals=(4 8 8 8 8 32 32 32 32 8 16 32 64 128)
@@ -18,6 +19,12 @@ for i in "${!M_vals[@]}"; do
     n=${n_vals[$i]}
 
     echo "Running make with: i=$i M=$M K=$K N=$N m=$m k=$k n=$n"
+
     make clean && make i=$i M=$M K=$K N=$N m=$m k=$k n=$n run_sim
+
+    diff -w data/matC0_sim.txt data/matC0.txt > /dev/null || { 
+        echo -e "\n\nError: Output does not match\n\n" >&2
+        exit 1
+    }
 
 done
