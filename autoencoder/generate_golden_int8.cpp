@@ -101,7 +101,7 @@ int main(){
 				}
 			}
 
-			// write matB to matB.txt
+			// write matA to matA.txt
 			for (int i = 0; i < single_M*single_K; i++){
 
 				a_file_array[xy] << int(matA[i][xy]);
