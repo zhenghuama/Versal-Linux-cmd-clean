@@ -2,7 +2,7 @@
 *.a
 *.vcd
 .AIE_SIM_CMD_LINE_OPTIONS
-/aiesimulator_output
+/aiesimulator_output*
 /.Xil
 /Work
 ISS_RPC_SERVER_PORT
@@ -12,3 +12,4 @@ plio_throughput_info.json
 sol.db
 generate_golden_int8.exe
 data
+results
