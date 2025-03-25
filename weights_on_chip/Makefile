@@ -153,7 +153,7 @@ N = 8
 m = 4
 k = 8
 n = 4
-i = 0
+i = 100
 
 aie/kernels/vars.h:
 	echo "#define single_M $(M)\n#define single_K $(K)\n#define single_N $(N)\n#define M_API $(m)\n#define K_API $(k)\n#define N_API $(n)" > $@
@@ -161,7 +161,7 @@ aie/kernels/vars.h:
 run_sim: aie/kernels/vars.h golden aie sim
 	grep -v '^T' "aiesimulator_output/data/matC0.txt" > "data/matC0_sim.txt"
 	diff -w "data/matC0_sim.txt" "data/matC0.txt" > /dev/null  && echo "\n\n Success: Outputs match\n\n" || echo "\n\nError: Output does not match\n\n"
-	mkdir -p results aiesimulator_output
+	mkdir -p results
 	cp -r aiesimulator_output results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)
 	cp data/matC0* results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/data
 

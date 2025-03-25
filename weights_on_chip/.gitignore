@@ -12,4 +12,5 @@ plio_throughput_info.json
 sol.db
 generate_golden_int8.exe
 data
-results
+results*
+aie/kernels/vars.h
