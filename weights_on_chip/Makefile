@@ -161,9 +161,11 @@ aie/kernels/vars.h:
 run_sim: aie/kernels/vars.h golden aie sim
 	grep -v '^T' "aiesimulator_output/data/matC0.txt" > "data/matC0_sim.txt"
 	diff -w "data/matC0_sim.txt" "data/matC0.txt" > /dev/null  && echo "\n\n Success: Outputs match\n\n" || echo "\n\nError: Output does not match\n\n"
-	mkdir -p results
-	cp -r aiesimulator_output results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)
-	cp data/matC0* results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/data
+	mkdir -p results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
+	cp -r aiesimulator_output results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
+	cp -r Work results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
+	cp -r data results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/data
+	cp tutorial.vcd results/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
 
 analyze: run_sim
 	vitis_analyzer -a aiesimulator_output/default.aierun_summary
