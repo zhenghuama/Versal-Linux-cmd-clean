@@ -96,4 +96,39 @@ void gemm(
 	}
 }
 
+
+
+
+template <int N_API, int single_M, int single_N>
+void sum(
+	input_window_int8 * __restrict matA,
+	input_window_int8 * __restrict matB, output_window_int8 * __restrict matC) {
+
+	// pointers of matrices
+	const int8* __restrict pA = (int8*) matA->ptr;
+	const int8* __restrict pA = (int8*) matB->ptr;
+	int8* __restrict pC = (int8*) matC->ptr;
+
+	// unroll the loops for more optimization
+	for (unsigned i = 0; i < single_M; i++)
+//		chess_prepare_for_pipelining
+		chess_flatten_loop
+	{
+
+		for (unsigned j = 0; j < (single_N/N_API); j++)
+		chess_flatten_loop
+//		chess_prepare_for_pipelining
+//		Just write it this way, don't question it, or it won't scheudle at every clk.
+		{
+			aie::vector<int8, N_API> A = aie::load_v<N_API>(pA); pA += N_API;
+			aie::vector<int8, N_API> B = aie::load_v<N_API>(pB); pB += N_API;
+
+			auto C = aie::add(A,B);
+
+			aie::store_v(pC, C); pC +=N_API;
+
+		}
+	}
+}
+
 #endif
