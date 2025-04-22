@@ -16,4 +16,48 @@ DENSE_FN(8)
 
 #undef DENSE_FN
 
+#define PARALLEL_MMUL(IDX, PART) void p##IDX##PART(input_window_int8 * __restrict matA, output_window_int8 * __restrict matC);
+
+
+PARALLEL_MMUL(0,0)
+PARALLEL_MMUL(1,0)
+PARALLEL_MMUL(2,0)
+PARALLEL_MMUL(3,0)
+PARALLEL_MMUL(4,0)
+PARALLEL_MMUL(5,0)
+PARALLEL_MMUL(6,0)
+PARALLEL_MMUL(7,0)
+PARALLEL_MMUL(8,0)
+
+PARALLEL_MMUL(0,1)
+PARALLEL_MMUL(1,1)
+PARALLEL_MMUL(2,1)
+PARALLEL_MMUL(3,1)
+PARALLEL_MMUL(4,1)
+PARALLEL_MMUL(5,1)
+PARALLEL_MMUL(6,1)
+PARALLEL_MMUL(7,1)
+PARALLEL_MMUL(8,1)
+
+#undef PARALLEL_MMUL
+
+
+#define SUM(IDX) void s##IDX(input_window_int8 * __restrict matA, \
+    input_window_int8 * __restrict matB, \
+    output_window_int8 * __restrict matC);
+
+
+SUM(0)
+SUM(1)
+SUM(2)
+SUM(3)
+SUM(4)
+SUM(5)
+SUM(6)
+SUM(7)
+SUM(8)
+
+#undef SUM
+
+
 #endif
