@@ -166,19 +166,14 @@ void partial_gemm(
 				C11.mac(A1, B1);
 			}
 			auto C00_i8 = C00.template to_vector<int8>(SHIFT);
-      auto C01_i8 = C01.template to_vector<int8>(SHIFT);
-      auto C10_i8 = C10.template to_vector<int8>(SHIFT);
-      auto C11_i8 = C11.template to_vector<int8>(SHIFT);
+			auto C01_i8 = C01.template to_vector<int8>(SHIFT);
+			auto C10_i8 = C10.template to_vector<int8>(SHIFT);
+			auto C11_i8 = C11.template to_vector<int8>(SHIFT);
 
-      auto C00_relu = aie::max(C00_i8, (int8)0); 
-      auto C01_relu = aie::max(C01_i8, (int8)0); 
-      auto C10_relu = aie::max(C10_i8, (int8)0); 
-      auto C11_relu = aie::max(C11_i8, (int8)0); 
-
-			aie::store_v(pC1, C00_relu); pC1 +=MMUL::size_C;
-			aie::store_v(pC1, C01_relu); pC1 +=MMUL::size_C;
-			aie::store_v(pC2, C10_relu); pC2 +=MMUL::size_C;
-			aie::store_v(pC2, C11_relu); pC2 +=MMUL::size_C;
+			aie::store_v(pC1, C00_i8); pC1 +=MMUL::size_C;
+			aie::store_v(pC1, C01_i8); pC1 +=MMUL::size_C;
+			aie::store_v(pC2, C10_i8); pC2 +=MMUL::size_C;
+			aie::store_v(pC2, C11_i8); pC2 +=MMUL::size_C;
 
 			// aie::store_v(pC1, C00.template to_vector<int8>(SHIFT)); pC1 +=MMUL::size_C;
 			// aie::store_v(pC1, C01.template to_vector<int8>(SHIFT)); pC1 +=MMUL::size_C;
@@ -190,7 +185,7 @@ void partial_gemm(
 
 
 
-template <int N_API, int single_M, int single_N>
+template <int N_API, int single_M, int single_N, int SHIFT>
 void sum(
 	input_window_int8 * __restrict matA,
 	input_window_int8 * __restrict matB, output_window_int8 * __restrict matC) {
@@ -215,15 +210,17 @@ void sum(
 			aie::vector<int8, N_API> B = aie::load_v<N_API>(pB); pB += N_API;
 
 			auto C = aie::add(A,B);
+			auto C_i8 = C.template to_vector<int8>(SHIFT);
+			auto C_relu = aie::max(C_i8, (int8)0); 
 
-			aie::store_v(pC, C); pC +=N_API;
+			aie::store_v(pC, C_relu); pC +=N_API;
 
 		}
 	}
 }
 
 
-template <int N_API, int single_M, int single_N, int PART>
+template <int N_API, int single_M, int single_N, int SHIFT, int PART>
 void partial_sum(
 	input_window_int8 * __restrict matA,
 	input_window_int8 * __restrict matB, output_window_int8 * __restrict matC) {
@@ -247,8 +244,10 @@ void partial_sum(
 			aie::vector<int8, N_API> B = aie::load_v<N_API>(pB); pB += N_API;
 
 			auto C = aie::add(A,B);
+			auto C_i8 = C.template to_vector<int8>(SHIFT);
+			auto C_relu = aie::max(C_i8, (int8)0); 
 
-			aie::store_v(pC, C); pC +=N_API;
+			aie::store_v(pC, C_relu); pC +=N_API;
 
 		}
 	}

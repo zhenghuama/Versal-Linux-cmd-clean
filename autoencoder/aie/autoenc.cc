@@ -91,7 +91,7 @@ PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
   void s##IDX(  input_window_int8  * __restrict matA,                   \
                 input_window_int8  * __restrict matB,                   \
                 output_window_int8 * __restrict matC) {                 \
-    sum<API_N, S_M, S_N>(matA, matB, matC); \
+    sum<API_N, S_M, S_N, 0>(matA, matB, matC); \
   }
 
   SUM(0, 16, N,128)
@@ -108,7 +108,7 @@ PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
   void s##IDX##PART(  input_window_int8  * __restrict matA,                   \
                 input_window_int8  * __restrict matB,                   \
                 output_window_int8 * __restrict matC) {                 \
-    partial_sum<API_N, S_M, S_N / F, PART>(matA, matB, matC); \
+    partial_sum<API_N, S_M, S_N / F, 0, PART>(matA, matB, matC); \
   }
 
   PARALLEL_SUM(0, 16, N,128, 0, FACTOR)
