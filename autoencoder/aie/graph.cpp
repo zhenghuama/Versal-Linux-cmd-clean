@@ -52,8 +52,8 @@ public:
 
 class ParallelMMUlGraph : public adf::graph {
 	private:
-	  kernel mmuls [N_LAYERS, FACTOR];
-	  kernel sums [N_LAYERS, FACTOR];
+	  kernel mmuls [N_LAYERS][FACTOR];
+	  kernel sums [N_LAYERS][FACTOR];
 	
 	public:
 	  input_plio  A;
@@ -64,92 +64,103 @@ class ParallelMMUlGraph : public adf::graph {
 			C = output_plio::create(plio_128_bits, "data/matC0.txt");
 
 			// kernels creation
-			mmuls[0, 0] = kernel::create(p00);
-			mmuls[1, 0] = kernel::create(p10);
-			mmuls[2, 0] = kernel::create(p20);
-			mmuls[3, 0] = kernel::create(p30);
-			mmuls[4, 0] = kernel::create(p40);
-			mmuls[5, 0] = kernel::create(p50);
-			mmuls[6, 0] = kernel::create(p60);
-			mmuls[7, 0] = kernel::create(p70);
-			mmuls[8, 0] = kernel::create(p80);
+			mmuls[0][0] = kernel::create(p00);
+			mmuls[1][0] = kernel::create(p10);
+			mmuls[2][0] = kernel::create(p20);
+			mmuls[3][0] = kernel::create(f3); // kernel::create(p30);
+			mmuls[4][0] = kernel::create(f4); // kernel::create(p40);
+			mmuls[5][0] = kernel::create(f5); // kernel::create(p50);
+			mmuls[6][0] = kernel::create(p60);
+			mmuls[7][0] = kernel::create(p70);
+			mmuls[8][0] = kernel::create(p80);
 
-			mmuls[0, 1] = kernel::create(p01);
-			mmuls[1, 1] = kernel::create(p11);
-			mmuls[2, 1] = kernel::create(p21);
-			mmuls[3, 1] = kernel::create(p31);
-			mmuls[4, 1] = kernel::create(p41);
-			mmuls[5, 1] = kernel::create(p51);
-			mmuls[6, 1] = kernel::create(p61);
-			mmuls[7, 1] = kernel::create(p71);
-			mmuls[8, 1] = kernel::create(p81);
+			mmuls[0][1] = kernel::create(p01);
+			mmuls[1][1] = kernel::create(p11);
+			mmuls[2][1] = kernel::create(p21);
+			// mmuls[3][1] = kernel::create(p31);
+			// mmuls[4][1] = kernel::create(p41);
+			// mmuls[5][1] = kernel::create(p51);
+			mmuls[6][1] = kernel::create(p61);
+			mmuls[7][1] = kernel::create(p71);
+			mmuls[8][1] = kernel::create(p81);
 
-			sums[0, 0] = kernel::create(s00);
-			sums[1, 0] = kernel::create(s10);
-			sums[2, 0] = kernel::create(s20);
-			sums[3, 0] = kernel::create(s30);
-			sums[4, 0] = kernel::create(s40);
-			sums[5, 0] = kernel::create(s50);
-			sums[6, 0] = kernel::create(s60);
-			sums[7, 0] = kernel::create(s70);
-			sums[8, 0] = kernel::create(s80);
+			sums[0][0] = kernel::create(s00);
+			sums[1][0] = kernel::create(s10);
+			sums[2][0] = kernel::create(s20);
+			// sums[3][0] = kernel::create(s30);
+			// sums[4][0] = kernel::create(s40);
+			// sums[5][0] = kernel::create(s50);
+			sums[6][0] = kernel::create(s60);
+			sums[7][0] = kernel::create(s70);
+			sums[8][0] = kernel::create(s80);
 
-			sums[0, 1] = kernel::create(s01);
-			sums[1, 1] = kernel::create(s11);
-			sums[2, 1] = kernel::create(s21);
-			sums[3, 1] = kernel::create(s31);
-			sums[4, 1] = kernel::create(s41);
-			sums[5, 1] = kernel::create(s51);
-			sums[6, 1] = kernel::create(s61);
-			sums[7, 1] = kernel::create(s71);
-			sums[8, 1] = kernel::create(s81);
+			sums[0][1] = kernel::create(s01);
+			sums[1][1] = kernel::create(s11);
+			// sums[2][1] = kernel::create(s21); // UNUSED
+			// sums[3][1] = kernel::create(s31);
+			// sums[4][1] = kernel::create(s41);
+			// sums[5][1] = kernel::create(s51);
+			sums[6][1] = kernel::create(s61);
+			sums[7][1] = kernel::create(s71);
+			// sums[8][1] = kernel::create(s81); // UNUSED
 
 		
 	
 			// Kernel connections
-			connect< window<2*128*1> >  (A        .out[0], mmuls[0,0].in[0]);
-			connect< window<2*128*1> >  (A        .out[0], mmuls[0,1].in[0]);
-			for(int i = 0; i < 3; i++){
-				connect< window<2*128*1> >  (mmuls[i,0].out[0], sums[i,0].in[0]);
-				connect< window<2*128*1> >  (mmuls[i,0].out[0], sums[i,1].in[1]);
+			connect< window<2*128*1> >  (A        .out[0], mmuls[0][0].in[0]);
+			connect< window<2*128*1> >  (A        .out[0], mmuls[0][1].in[0]);
+			for(int i = 0; i < 2; i++){
+				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
+				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
 
-				connect< window<2*128*1> >  (mmuls[i,1].out[0], sums[i,0].in[1]);
-				connect< window<2*128*1> >  (mmuls[i,1].out[0], sums[i,1].in[0]);
+				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
+				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
 
-				connect< window<2*128*1> >  (sums[i,0].out[0], mmuls[i+1,0].in[0]);
-				connect< window<2*128*1> >  (sums[i,1].out[0], mmuls[i+1,1].in[0]);
+				connect< window<2*128*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
+				connect< window<2*128*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
 			}
+			connect< window<2*128*1> >  (mmuls[2][0].out[0], sums[2][0].in[0]);
+			connect< window<2*128*1> >  (mmuls[2][1].out[0], sums[2][0].in[1]);
+			connect< window<2*128*1> >  (sums[2][0].out[0], mmuls[3][0].in[0]);
+
+			/*
 			for(int i = 3; i < 5; i++){
-				connect< window<2*  8*1> >  (mmuls[i,0].out[0], sums[i,0].in[0]);
-				connect< window<2*  8*1> >  (mmuls[i,0].out[0], sums[i,1].in[1]);
+				connect< window<2*  8*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
+				connect< window<2*  8*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
 
-				connect< window<2*  8*1> >  (mmuls[i,1].out[0], sums[i,0].in[1]);
-				connect< window<2*  8*1> >  (mmuls[i,1].out[0], sums[i,1].in[0]);
+				connect< window<2*  8*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
+				connect< window<2*  8*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
 
-				connect< window<2*  8*1> >  (sums[i,0].out[0], mmuls[i+1,0].in[0]);
-				connect< window<2*  8*1> >  (sums[i,1].out[0], mmuls[i+1,1].in[0]);
+				connect< window<2*  8*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
+				connect< window<2*  8*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
 			}
-			for(int i = 5; i < 8; i++){
-				connect< window<2*128*1> >  (mmuls[i,0].out[0], sums[i,0].in[0]);
-				connect< window<2*128*1> >  (mmuls[i,0].out[0], sums[i,1].in[1]);
+			*/
+			connect< window<2*  8*1> >  (mmuls[3][0].out[0], mmuls[4][0].in[0]);
+			connect< window<2*  8*1> >  (mmuls[4][0].out[0], mmuls[5][0].in[0]);
+			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][0].in[0]);
+			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][1].in[0]);
+			
+			for(int i = 6; i < 8; i++){
+				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
+				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
 
-				connect< window<2*128*1> >  (mmuls[i,1].out[0], sums[i,0].in[1]);
-				connect< window<2*128*1> >  (mmuls[i,1].out[0], sums[i,1].in[0]);
+				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
+				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
 
-				connect< window<2*128*1> >  (sums[i,0].out[0], mmuls[i+1,0].in[0]);
-				connect< window<2*128*1> >  (sums[i,1].out[0], mmuls[i+1,1].in[0]);
+				connect< window<2*128*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
+				connect< window<2*128*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
 			}
-			connect< window<2*128*1> >  (mmuls[8,0].out[0], sums[8,0].in[0]);
-			connect< window<2*128*1> >  (mmuls[8,1].out[0], sums[8,0].in[1]);
-			connect< window<2*128*1> >  (sums[8,0].out[0], C        .in[0]);
+			connect< window<2*128*1> >  (mmuls[8][0].out[0], sums[8][0].in[0]);
+			connect< window<2*128*1> >  (mmuls[8][1].out[0], sums[8][0].in[1]);
+			connect< window<2*128*1> >  (sums[8][0].out[0], C        .in[0]);
 
 			// direct the source file of kernels
 			for (int i=0; i<N_LAYERS; i++) {
 				for (int j=0; j<FACTOR; j++){
-					source(mmuls[i,j]) = "autoenc.cc";
-					runtime<ratio>(mmuls[i,j]) = 0.8;
-					source(sums[i,j]) = "autoenc.cc";
-					runtime<ratio>(sums[i,j]) = 0.2;
+					source(mmuls[i][j]) = "autoenc.cc";
+					runtime<ratio>(mmuls[i][j]) = 0.8;
+					source(sums[i][j]) = "autoenc.cc";
+					runtime<ratio>(sums[i][j]) = 0.2;
 				}
 			}
 	  }
@@ -162,13 +173,16 @@ simpleGraph mygraph;
 ParallelMMUlGraph myParallelGraph;
 
 int main(void) {
-	/*
+	
   	mygraph.init();
   	mygraph.run(10);
   	mygraph.end();
-	*/
+	
+	/*
 	myParallelGraph.init();
   	myParallelGraph.run(10);
   	myParallelGraph.end();
+	*/
+	
   	return 0;
 }

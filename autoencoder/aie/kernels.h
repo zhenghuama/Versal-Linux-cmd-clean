@@ -106,7 +106,7 @@ void partial_gemm(
 	// pointers of matrices
 	const int8* __restrict pA = ((int8*) matA->ptr);
 	const int8* __restrict pB = (int8*) matB
-		+ (PART * single_K * single_N) // Parallel offset (rows);
+		+ (PART * single_K * single_N); // Parallel offset (rows);
 	int8* __restrict pC = (int8*) matC->ptr;
 
 	// unroll the loops for more optimization
@@ -198,7 +198,7 @@ void sum(
 
 		// pointers of matrices
 		const int8* __restrict pA = (int8*) matA->ptr + i * single_N;
-		const int8* __restrict pA = (int8*) matB->ptr + i * single_N;
+		const int8* __restrict pB = (int8*) matB->ptr + i * single_N;
 		int8* __restrict pC = (int8*) matC->ptr + i * single_N;
 
 		for (unsigned j = 0; j < (single_N/N_API); j++)
@@ -210,8 +210,7 @@ void sum(
 			aie::vector<int8, N_API> B = aie::load_v<N_API>(pB); pB += N_API;
 
 			auto C = aie::add(A,B);
-			auto C_i8 = C.template to_vector<int8>(SHIFT);
-			auto C_relu = aie::max(C_i8, (int8)0); 
+			auto C_relu = aie::max(C, (int8)0); 
 
 			aie::store_v(pC, C_relu); pC +=N_API;
 
@@ -232,7 +231,7 @@ void partial_sum(
 	{
 		// pointers of matrices
 		const int8* __restrict pA = (int8*) matA->ptr + i * single_N * PART;
-		const int8* __restrict pA = (int8*) matB->ptr + i * single_N * PART;
+		const int8* __restrict pB = (int8*) matB->ptr + i * single_N * PART;
 		int8* __restrict pC = (int8*) matC->ptr + i * single_N * PART;
 
 		for (unsigned j = 0; j < (single_N/N_API); j++)
@@ -244,8 +243,7 @@ void partial_sum(
 			aie::vector<int8, N_API> B = aie::load_v<N_API>(pB); pB += N_API;
 
 			auto C = aie::add(A,B);
-			auto C_i8 = C.template to_vector<int8>(SHIFT);
-			auto C_relu = aie::max(C_i8, (int8)0); 
+			auto C_relu = aie::max(C, (int8)0); 
 
 			aie::store_v(pC, C_relu); pC +=N_API;
 
