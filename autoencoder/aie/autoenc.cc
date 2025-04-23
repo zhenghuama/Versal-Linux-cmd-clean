@@ -87,22 +87,49 @@ PARALLEL_MMUL(6, 2,16,8, N,128,128, {5}, 1, FACTOR)
 PARALLEL_MMUL(7, 2,16,8, N,128,128, {5}, 1, FACTOR)
 PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
 
-#define SUM(IDX, API_N, S_M, S_N, F)      \
+#define SUM(IDX, API_N, S_M, S_N)      \
   void s##IDX(  input_window_int8  * __restrict matA,                   \
                 input_window_int8  * __restrict matB,                   \
                 output_window_int8 * __restrict matC) {                 \
-    sum<API_N, S_M, S_N / F, 0>(matA, matC); \
+    sum<API_N, S_M, S_N>(matA, matB, matC); \
   }
 
-  SUM(0, 16, N,128, FACTOR)
-  SUM(1, 16, N,128, FACTOR)
-  SUM(2, 16, N,128, FACTOR)
-  SUM(3, 16, N,128, FACTOR)
-  SUM(4, 16, N,128, FACTOR)
-  SUM(5, 16, N,128, FACTOR)
-  SUM(6, 16, N,128, FACTOR)
-  SUM(7, 16, N,128, FACTOR)
-  SUM(8, 16, N,128, FACTOR)
+  SUM(0, 16, N,128)
+  SUM(1, 16, N,128)
+  SUM(2, 16, N,128)
+  SUM(3, 16, N,128)
+  SUM(4, 8, N,8)
+  SUM(5, 8, N,8)
+  SUM(6, 16, N,128)
+  SUM(7, 16, N,128)
+  SUM(8, 16, N,128)
+
+  #define PARALLEL_SUM(IDX, API_N, S_M, S_N, PART, F)      \
+  void s##IDX##PART(  input_window_int8  * __restrict matA,                   \
+                input_window_int8  * __restrict matB,                   \
+                output_window_int8 * __restrict matC) {                 \
+    partial_sum<API_N, S_M, S_N / F, PART>(matA, matB, matC); \
+  }
+
+  PARALLEL_SUM(0, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(1, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(2, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(3, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(4, 8, N,8, 0, FACTOR)
+  PARALLEL_SUM(5, 8, N,8, 0, FACTOR)
+  PARALLEL_SUM(6, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(7, 16, N,128, 0, FACTOR)
+  PARALLEL_SUM(8, 16, N,128, 0, FACTOR)
+
+  PARALLEL_SUM(0, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(1, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(2, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(3, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(4, 8, N,8, 1, FACTOR)
+  PARALLEL_SUM(5, 8, N,8, 1, FACTOR)
+  PARALLEL_SUM(6, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(7, 16, N,128, 1, FACTOR)
+  PARALLEL_SUM(8, 16, N,128, 1, FACTOR)
 
 #undef MAT_B
 #undef DENSE_FN

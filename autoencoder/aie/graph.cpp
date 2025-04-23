@@ -84,25 +84,25 @@ class ParallelMMUlGraph : public adf::graph {
 			mmuls[7, 1] = kernel::create(p71);
 			mmuls[8, 1] = kernel::create(p81);
 
-			sums[0, 0] = kernel::create(s0);
-			sums[1, 0] = kernel::create(s1);
-			sums[2, 0] = kernel::create(s2);
-			sums[3, 0] = kernel::create(s3);
-			sums[4, 0] = kernel::create(s4);
-			sums[5, 0] = kernel::create(s5);
-			sums[6, 0] = kernel::create(s6);
-			sums[7, 0] = kernel::create(s7);
-			sums[8, 0] = kernel::create(s8);
+			sums[0, 0] = kernel::create(s00);
+			sums[1, 0] = kernel::create(s10);
+			sums[2, 0] = kernel::create(s20);
+			sums[3, 0] = kernel::create(s30);
+			sums[4, 0] = kernel::create(s40);
+			sums[5, 0] = kernel::create(s50);
+			sums[6, 0] = kernel::create(s60);
+			sums[7, 0] = kernel::create(s70);
+			sums[8, 0] = kernel::create(s80);
 
-			sums[0, 1] = kernel::create(s0);
-			sums[1, 1] = kernel::create(s1);
-			sums[2, 1] = kernel::create(s2);
-			sums[3, 1] = kernel::create(s3);
-			sums[4, 1] = kernel::create(s4);
-			sums[5, 1] = kernel::create(s5);
-			sums[6, 1] = kernel::create(s6);
-			sums[7, 1] = kernel::create(s7);
-			sums[8, 1] = kernel::create(s8);
+			sums[0, 1] = kernel::create(s01);
+			sums[1, 1] = kernel::create(s11);
+			sums[2, 1] = kernel::create(s21);
+			sums[3, 1] = kernel::create(s31);
+			sums[4, 1] = kernel::create(s41);
+			sums[5, 1] = kernel::create(s51);
+			sums[6, 1] = kernel::create(s61);
+			sums[7, 1] = kernel::create(s71);
+			sums[8, 1] = kernel::create(s81);
 
 		
 	
