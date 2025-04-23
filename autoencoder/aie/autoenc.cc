@@ -88,7 +88,7 @@ PARALLEL_MMUL(7, 2,16,8, N,128,128, {5}, 1, FACTOR)
 PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
 
 #define SUM(IDX, API_N, S_M, S_N)      \
-  void s##IDX(  input_window_int8  * __restrict matA,                   \
+  void sum##IDX(  input_window_int8  * __restrict matA,                   \
                 input_window_int8  * __restrict matB,                   \
                 output_window_int8 * __restrict matC) {                 \
     sum<API_N, S_M, S_N, 0>(matA, matB, matC); \
@@ -129,7 +129,7 @@ PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
   // PARALLEL_SUM(5, 16, N,128, 1, FACTOR)
   PARALLEL_SUM(6, 16, N,128, 1, FACTOR)
   PARALLEL_SUM(7, 16, N,128, 1, FACTOR)
-  PARALLEL_SUM(8, 16, N,128, 1, FACTOR)
+  // PARALLEL_SUM(8, 16, N,128, 1, FACTOR)
 
 #undef MAT_B
 #undef DENSE_FN

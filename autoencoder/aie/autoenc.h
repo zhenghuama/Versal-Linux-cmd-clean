@@ -42,7 +42,7 @@ PARALLEL_MMUL(8,1)
 #undef PARALLEL_MMUL
 
 
-#define SUM(IDX) void s##IDX(input_window_int8 * __restrict matA, \
+#define SUM(IDX) void sum##IDX(input_window_int8 * __restrict matA, \
     input_window_int8 * __restrict matB, \
     output_window_int8 * __restrict matC);
 
@@ -71,7 +71,7 @@ PARALLEL_SUM(2,0)
 // PARALLEL_SUM(5,0)
 PARALLEL_SUM(6,0)
 PARALLEL_SUM(7,0)
-PARALLEL_SUM(8,0)
+// PARALLEL_SUM(8,0)
 
 PARALLEL_SUM(0,1)
 PARALLEL_SUM(1,1)
@@ -81,7 +81,7 @@ PARALLEL_SUM(2,1)
 // PARALLEL_SUM(5,1)
 PARALLEL_SUM(6,1)
 PARALLEL_SUM(7,1)
-PARALLEL_SUM(8,1)
+// PARALLEL_SUM(8,1)
 
 #undef PARALLEL_SUM
 

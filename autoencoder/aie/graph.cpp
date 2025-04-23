@@ -93,7 +93,7 @@ class ParallelMMUlGraph : public adf::graph {
 			// sums[5][0] = kernel::create(s50);
 			sums[6][0] = kernel::create(s60);
 			sums[7][0] = kernel::create(s70);
-			sums[8][0] = kernel::create(s8); // kernel::create(s80);
+			sums[8][0] = kernel::create(sum8); // kernel::create(s80);
 
 			sums[0][1] = kernel::create(s01);
 			sums[1][1] = kernel::create(s11);
@@ -181,20 +181,20 @@ class ParallelMMUlGraph : public adf::graph {
 
 using namespace adf;
 
-simpleGraph mygraph;
+// simpleGraph mygraph;
 ParallelMMUlGraph myParallelGraph;
 
 int main(void) {
-	
+	/*	
   	mygraph.init();
   	mygraph.run(10);
   	mygraph.end();
+	*/
 	
-	/*
 	myParallelGraph.init();
   	myParallelGraph.run(10);
   	myParallelGraph.end();
-	*/
+	
 	
   	return 0;
 }
