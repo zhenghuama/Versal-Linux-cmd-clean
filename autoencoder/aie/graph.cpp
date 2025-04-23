@@ -165,11 +165,11 @@ class ParallelMMUlGraph : public adf::graph {
 			for (int i=0; i<N_LAYERS; i++) {
 				for (int j=0; j<FACTOR; j++){
 					auto t = std::tuple<int, int>{i, j};
-					if(std::find(mmulUnusedKernels.begin(), mmulUnusedKernels.end(), t) == v.end()){
+					if(std::find(mmulUnusedKernels.begin(), mmulUnusedKernels.end(), t) == mmulUnusedKernels.end()){
 						source(mmuls[i][j]) = "autoenc.cc";
 						runtime<ratio>(mmuls[i][j]) = 0.8;
 					}
-					if(std::find(sumUnusedKernels.begin(), sumUnusedKernels.end(), t) == v.end()){
+					if(std::find(sumUnusedKernels.begin(), sumUnusedKernels.end(), t) == sumUnusedKernels.end()){
 						source(sums[i][j]) = "autoenc.cc";
 						runtime<ratio>(sums[i][j]) = 0.2;
 					}
