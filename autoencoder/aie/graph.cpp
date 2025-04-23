@@ -2,6 +2,7 @@
 #include <adf.h>
 #include "autoenc.h"
 #include <vector>
+#include <tuple>
 #include "const.h"
 
 using namespace adf;
@@ -92,7 +93,7 @@ class ParallelMMUlGraph : public adf::graph {
 			// sums[5][0] = kernel::create(s50);
 			sums[6][0] = kernel::create(s60);
 			sums[7][0] = kernel::create(s70);
-			sums[8][0] = kernel::create(s80);
+			sums[8][0] = kernel::create(s8); // kernel::create(s80);
 
 			sums[0][1] = kernel::create(s01);
 			sums[1][1] = kernel::create(s11);
@@ -104,7 +105,13 @@ class ParallelMMUlGraph : public adf::graph {
 			sums[7][1] = kernel::create(s71);
 			// sums[8][1] = kernel::create(s81); // UNUSED
 
-		
+			auto mmulUnusedKernels = std::vector<std::tuple<int,int>>{
+				{3,1}, {4,1}, {5,1}
+			};
+			auto sumUnusedKernels = std::vector<std::tuple<int,int>>{
+				{2,1}, {3,1}, {4,1}, {5,1}, {8,1}, {3,0}, {4,0}, {5,0}
+			};
+
 	
 			// Kernel connections
 			connect< window<2*128*1> >  (A        .out[0], mmuls[0][0].in[0]);
@@ -157,10 +164,15 @@ class ParallelMMUlGraph : public adf::graph {
 			// direct the source file of kernels
 			for (int i=0; i<N_LAYERS; i++) {
 				for (int j=0; j<FACTOR; j++){
-					source(mmuls[i][j]) = "autoenc.cc";
-					runtime<ratio>(mmuls[i][j]) = 0.8;
-					source(sums[i][j]) = "autoenc.cc";
-					runtime<ratio>(sums[i][j]) = 0.2;
+					auto t = std::tuple<int, int>{i, j};
+					if(std::find(mmulUnusedKernels.begin(), mmulUnusedKernels.end(), t) == v.end()){
+						source(mmuls[i][j]) = "autoenc.cc";
+						runtime<ratio>(mmuls[i][j]) = 0.8;
+					}
+					if(std::find(sumUnusedKernels.begin(), sumUnusedKernels.end(), t) == v.end()){
+						source(sums[i][j]) = "autoenc.cc";
+						runtime<ratio>(sums[i][j]) = 0.2;
+					}
 				}
 			}
 	  }

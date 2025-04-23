@@ -55,7 +55,7 @@ PARALLEL_MMUL(8,1)
 // SUM(5)
 // SUM(6)
 // SUM(7)
-// SUM(8)
+SUM(8)
 
 #undef SUM
 

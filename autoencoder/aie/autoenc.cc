@@ -102,7 +102,7 @@ PARALLEL_MMUL(8, 2,16,8, N,128,128, {5}, 1, FACTOR)
   // SUM(5, 16, N,8)
   // SUM(6, 16, N,128)
   // SUM(7, 16, N,128)
-  // SUM(8, 16, N,128)
+  SUM(8, 16, N,128)
 
   #define PARALLEL_SUM(IDX, API_N, S_M, S_N, PART, F)      \
   void s##IDX##PART(  input_window_int8  * __restrict matA,                   \
