@@ -1,0 +1,5 @@
+aiesimulator
+--pkg-dir ./Work
+--aiearch-version aie
+--profile
+--dump-vcd=tutorial

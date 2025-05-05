@@ -1,0 +1,14 @@
+{signal: [
+  {name: 's2mA',    wave: '3.....0.....', data: ['transfer'],                  node: '......a'},
+  {name: 's2mB',    wave: '0.....3.....', data: ['transfer']},
+  {name: 'compute', wave: '75.9..7.5.7.', data: ['k','main','stall','kernel', 'main', 'k'], node: '......b.c'},
+  {name: 'm2sA',    wave: '0....9...3..', data: ['stall', 'transfer'],         node: '.........d'},
+  {name: 'm2sB',    wave: '3....0......', data: ['transfer']},
+],
+  edge: [
+  'a~b', 'c~d'
+ ],
+  foot:{
+   text:'B) Bound by s2mm (input) data movement'
+ },
+ }

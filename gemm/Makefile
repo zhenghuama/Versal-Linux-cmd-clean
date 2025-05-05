@@ -148,6 +148,8 @@ else
 endif 
 
 run_sim: golden aie sim
+	grep -v '^T' "aiesimulator_output/data/matC0.txt" > "data/matC0_sim.txt"
+	diff -w "data/matC0_sim.txt" "data/matC0.txt" > /dev/null  && echo "\n\n Success: Outputs match\n\n" || echo "\n\nError: Output does not match\n\n"
 
 analyze: run_sim
 	vitis_analyzer -a aiesimulator_output/default.aierun_summary
@@ -247,4 +249,4 @@ clean:
 	rm -rf _x v++* $(KERNEL_XO) $(GRAPH_O) *.o *.compile_summary* *.xpe xnwOut *.xclbin* *.log *.xsa Work *.db *.csv *$(PFM)* *.jou .Xil
 	rm -rf sw/*.log sw/*.xclbin sw/cfg/ sw/launch_hw_emu.sh sw/qemu_dts_files sw/emu_qemu_scripts sw/*.exe sw/_x/ sw/*summary sw/*.o sw/*.elf sw/*.xpe sw/xnwOut sw/Work sw/*.csv sw/*.db sw/*.bin sw/*.BIN sw/*.bif sw/launch_hw_emulator.sh sw/*.txt sw/emulation sw/.Xil ./x86simulator_output
 	rm -rf sw/sd_card sw/sd_card.img sw/*.o ./*.exe sw/qeumu* x86simulator_output/ aiesimulator_output/ s2mm/ mm2s/ hls/
-	rm -rf *.exe data/*.txt
+	rm -rf *.exe data
