@@ -47,7 +47,7 @@ SW_EMU_CMD := ./host_ps_on_x86 a.xclbin
 HW_EMU_CMD := ./launch_hw_emu.sh -aie-sim-options ../aiesimulator_output/aiesim_options.txt -add-env AIE_COMPILER_WORKDIR=../Work 
 
 AIE_INCLUDE_FLAGS := --include "$(XILINX_VITIS)/aietools/include" --include "./aie" --include "./data" --include "./" --aie.xlopt=0
-AIE_FLAGS := $(AIE_INCLUDE_FLAGS) --platform $(BASE_PLATFORM) --work_dir ./Work --aie.heapsize=16420
+AIE_FLAGS := $(AIE_INCLUDE_FLAGS) --platform $(BASE_PLATFORM) --work_dir ./Work --aie.heapsize=31712
 
 ifeq ($(TARGET),sw_emu)
 	AIE_FLAGS += --target x86sim
@@ -147,26 +147,9 @@ else
 	$(AIESIM) --profile --dump-vcd=tutorial --pkg-dir=./Work
 endif 
 
-M = 4
-K = 16
-N = 16
-m = 2
-k = 4
-n = 8
-i = 100
-SUBDIR = "abc"
-
-aie/kernels/vars.h:
-	echo "#define single_M $(M)\n#define single_K $(K)\n#define single_N $(N)\n#define M_API $(m)\n#define K_API $(k)\n#define N_API $(n)" > $@
-
-run_sim: aie/kernels/vars.h golden aie sim
+run_sim: golden aie sim
 	grep -v '^T' "aiesimulator_output/data/matC0.txt" > "data/matC0_sim.txt"
 	diff -w "data/matC0_sim.txt" "data/matC0.txt" > /dev/null  && echo "\n\n Success: Outputs match\n\n" || echo "\n\nError: Output does not match\n\n"
-	mkdir -p results/$(SUBDIR)/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
-	cp -r aiesimulator_output results/$(SUBDIR)/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
-	cp -r Work results/$(SUBDIR)/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
-	cp -r data results/$(SUBDIR)/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/data
-	cp tutorial.vcd results/$(SUBDIR)/$(i)_mkn_$(m)x$(k)x$(n)__MKN_$(M)x$(K)x$(N)/
 
 analyze: run_sim
 	vitis_analyzer -a aiesimulator_output/default.aierun_summary
@@ -175,23 +158,6 @@ golden: generate_golden_int16.cpp
 	mkdir -p data
 	g++ -o generate_golden_int16.exe generate_golden_int16.cpp
 	./generate_golden_int16.exe
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #AIE or X86 compilation
@@ -283,5 +249,4 @@ clean:
 	rm -rf _x v++* $(KERNEL_XO) $(GRAPH_O) *.o *.compile_summary* *.xpe xnwOut *.xclbin* *.log *.xsa Work *.db *.csv *$(PFM)* *.jou .Xil
 	rm -rf sw/*.log sw/*.xclbin sw/cfg/ sw/launch_hw_emu.sh sw/qemu_dts_files sw/emu_qemu_scripts sw/*.exe sw/_x/ sw/*summary sw/*.o sw/*.elf sw/*.xpe sw/xnwOut sw/Work sw/*.csv sw/*.db sw/*.bin sw/*.BIN sw/*.bif sw/launch_hw_emulator.sh sw/*.txt sw/emulation sw/.Xil ./x86simulator_output
 	rm -rf sw/sd_card sw/sd_card.img sw/*.o ./*.exe sw/qeumu* x86simulator_output/ aiesimulator_output/ s2mm/ mm2s/ hls/
-	rm -rf *.exe data aie/kernels/vars.h
-	rm -rf ISS_RPC_SERVER_PORT plio_throughput_info.json  pl_sample_counts 
+	rm -rf *.exe data
