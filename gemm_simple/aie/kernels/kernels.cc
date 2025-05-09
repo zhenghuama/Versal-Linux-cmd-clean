@@ -20,8 +20,16 @@ void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict ma
   aie::tile tile=aie::tile::current();
   cycle_num[0]=tile.cycles();//cycle counter of the AI' Engine tile
 
-  for (unsigned i = 0; i < num_rowA; i++) { //for output row number of element matrix
-    for (unsigned j = 0; j < num_colB; j++) { //for output col number of element matrix
+  for (unsigned i = 0; i < num_rowA; ++i) 
+  chess_prepare_for_pipelining
+  chess_loop_range(2,)
+  chess_flatten_loop
+  { //for output row number of element matrix
+    for (unsigned j = 0; j < num_colB; ++j) 
+    chess_prepare_for_pipelining
+    chess_loop_range(2,)
+    chess_flatten_loop
+    { //for output col number of element matrix
       const int8 * __restrict pA1 = pA + ( i * num_colA + 0) * MMUL::size_A;
       const int8 * __restrict pB1 = pB + ( 0 * num_colB + j) * MMUL::size_B;
 
@@ -30,7 +38,9 @@ void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict ma
 
       MMUL C00; C00.mul(A0, B0);
 
-      for (unsigned k = 0; k < num_colA-1; k++) {
+      for (unsigned k = 0; k < num_colA-1; ++k) 
+      chess_flatten_loop
+      {
         A0 = aie::load_v<MMUL::size_A>(pA1); pA1 += MMUL::size_A;
         B0 = aie::load_v<MMUL::size_B>(pB1); pB1 += MMUL::size_B * num_colB;
         C00.mac(A0, B0);
