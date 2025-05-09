@@ -3,13 +3,12 @@
 #include "aie_api/aie_adf.hpp"
 #include "include.h"
 
+#define num_rowA (single_M/M_API)
+#define num_colA (single_K/K_API)
+#define num_colB (single_N/N_API)
 
 void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict matB, output_window_int32 * __restrict matC){
   using MMUL = aie::mmul<M_API, K_API, N_API, int8, int8>;
-
-  const int num_rowA = (single_M/M_API);
-  const int num_colA = (single_K/K_API);
-  const int num_colB = (single_N/N_API);
 
   const int8* __restrict pA=(int8*)matA->ptr;
   const int8* __restrict pB=(int8*)matB->ptr;
@@ -18,18 +17,14 @@ void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict ma
   //For profiling only 
   unsigned long long cycle_num[2];
   aie::tile tile=aie::tile::current();
-  cycle_num[0]=tile.cycles();//cycle counter of the AI' Engine tile
+  cycle_num[0]=tile.cycles();
 
   for (unsigned i = 0; i < num_rowA; ++i) 
-  chess_prepare_for_pipelining
-  chess_loop_range(2,)
-  chess_flatten_loop
-  { //for output row number of element matrix
+  chess_unroll_loop(num_rowA)
+  {
     for (unsigned j = 0; j < num_colB; ++j) 
-    chess_prepare_for_pipelining
-    chess_loop_range(2,)
-    chess_flatten_loop
-    { //for output col number of element matrix
+    chess_unroll_loop(num_colB)
+    {
       const int8 * __restrict pA1 = pA + ( i * num_colA + 0) * MMUL::size_A;
       const int8 * __restrict pB1 = pB + ( 0 * num_colB + j) * MMUL::size_B;
 
@@ -45,11 +40,10 @@ void gemm(input_window_int8 * __restrict matA, input_window_int8 * __restrict ma
         B0 = aie::load_v<MMUL::size_B>(pB1); pB1 += MMUL::size_B * num_colB;
         C00.mac(A0, B0);
       }
-
       aie::store_v(pC, C00.template to_vector<int32>(SHIFT)); pC += MMUL::size_C;
     }
   }
   //For profiling only 
-  cycle_num[1]=tile.cycles();//cycle counter of the AI Engine tile
+  cycle_num[1]=tile.cycles();
   printf("start=%lld,end=%lld,total=%lld\n",cycle_num[0],cycle_num[1],cycle_num[1]-cycle_num[0]);
 }
