@@ -66,16 +66,22 @@ class ParallelMMUlGraph : public adf::graph {
 
 			// kernels creation
 			mmuls[0][0] = kernel::create(p00);
+			location<kernel>(mmuls[0][0]) = tile(2, 0);
 			// mmuls[1][0] = kernel::create(p10);
 			// mmuls[2][0] = kernel::create(p20);
 			mmuls[3][0] = kernel::create(f3); // kernel::create(p30);
+			location<kernel>(mmuls[3][0]) = tile(0, 1);
 			mmuls[4][0] = kernel::create(f4); // kernel::create(p40);
+			location<kernel>(mmuls[4][0]) = tile(1, 1);
 			mmuls[5][0] = kernel::create(f5); // kernel::create(p50);
+			location<kernel>(mmuls[5][0]) = tile(2, 1);
 			// mmuls[6][0] = kernel::create(p60);
 			// mmuls[7][0] = kernel::create(p70);
 			mmuls[8][0] = kernel::create(p80);
+			location<kernel>(mmuls[8][0]) = tile(3, 0);
 
 			mmuls[0][1] = kernel::create(p01);
+			location<kernel>(mmuls[0][1]) = tile(0, 0);
 			// mmuls[1][1] = kernel::create(p11);
 			// mmuls[2][1] = kernel::create(p21);
 			// mmuls[3][1] = kernel::create(p31);
@@ -84,8 +90,10 @@ class ParallelMMUlGraph : public adf::graph {
 			// mmuls[6][1] = kernel::create(p61);
 			// mmuls[7][1] = kernel::create(p71);
 			mmuls[8][1] = kernel::create(p81);
+			location<kernel>(mmuls[8][1]) = tile(3, 1);
 
 			sums[0][0] = kernel::create(s00);
+			location<kernel>(sums[0][0]) = tile(1, 0);
 			// sums[1][0] = kernel::create(s10);
 			// sums[2][0] = kernel::create(s20);
 			// sums[3][0] = kernel::create(s30);
@@ -94,6 +102,7 @@ class ParallelMMUlGraph : public adf::graph {
 			// sums[6][0] = kernel::create(s60);
 			// sums[7][0] = kernel::create(s70);
 			sums[8][0] = kernel::create(sum8); // kernel::create(s80);
+			location<kernel>(sums[8][0]) = tile(4, 0);
 
 			// sums[0][1] = kernel::create(s01);
 			// sums[1][1] = kernel::create(s11);
