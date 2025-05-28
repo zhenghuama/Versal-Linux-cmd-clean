@@ -127,7 +127,7 @@ class ParallelMMUlGraph : public adf::graph {
 			connect< window<2*  8*1> >  (mmuls[4][0].out[0], mmuls[5][0].in[0]);
 			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[8][0].in[0]);
 			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[8][1].in[0]);
-			}
+			
 			connect< window<2*128*1> >  (mmuls[8][0].out[0], sums[8][0].in[0]);
 			connect< window<2*128*1> >  (mmuls[8][1].out[0], sums[8][0].in[1]);
 			connect< window<2*128*1> >  (sums[8][0].out[0], C        .in[0]);
