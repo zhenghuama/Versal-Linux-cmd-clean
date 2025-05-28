@@ -66,96 +66,67 @@ class ParallelMMUlGraph : public adf::graph {
 
 			// kernels creation
 			mmuls[0][0] = kernel::create(p00);
-			mmuls[1][0] = kernel::create(p10);
-			mmuls[2][0] = kernel::create(p20);
+			// mmuls[1][0] = kernel::create(p10);
+			// mmuls[2][0] = kernel::create(p20);
 			mmuls[3][0] = kernel::create(f3); // kernel::create(p30);
 			mmuls[4][0] = kernel::create(f4); // kernel::create(p40);
 			mmuls[5][0] = kernel::create(f5); // kernel::create(p50);
-			mmuls[6][0] = kernel::create(p60);
-			mmuls[7][0] = kernel::create(p70);
+			// mmuls[6][0] = kernel::create(p60);
+			// mmuls[7][0] = kernel::create(p70);
 			mmuls[8][0] = kernel::create(p80);
 
 			mmuls[0][1] = kernel::create(p01);
-			mmuls[1][1] = kernel::create(p11);
-			mmuls[2][1] = kernel::create(p21);
+			// mmuls[1][1] = kernel::create(p11);
+			// mmuls[2][1] = kernel::create(p21);
 			// mmuls[3][1] = kernel::create(p31);
 			// mmuls[4][1] = kernel::create(p41);
 			// mmuls[5][1] = kernel::create(p51);
-			mmuls[6][1] = kernel::create(p61);
-			mmuls[7][1] = kernel::create(p71);
+			// mmuls[6][1] = kernel::create(p61);
+			// mmuls[7][1] = kernel::create(p71);
 			mmuls[8][1] = kernel::create(p81);
 
 			sums[0][0] = kernel::create(s00);
-			sums[1][0] = kernel::create(s10);
-			sums[2][0] = kernel::create(s20);
+			// sums[1][0] = kernel::create(s10);
+			// sums[2][0] = kernel::create(s20);
 			// sums[3][0] = kernel::create(s30);
 			// sums[4][0] = kernel::create(s40);
 			// sums[5][0] = kernel::create(s50);
-			sums[6][0] = kernel::create(s60);
-			sums[7][0] = kernel::create(s70);
+			// sums[6][0] = kernel::create(s60);
+			// sums[7][0] = kernel::create(s70);
 			sums[8][0] = kernel::create(sum8); // kernel::create(s80);
 
-			sums[0][1] = kernel::create(s01);
-			sums[1][1] = kernel::create(s11);
+			// sums[0][1] = kernel::create(s01);
+			// sums[1][1] = kernel::create(s11);
 			// sums[2][1] = kernel::create(s21); // UNUSED
 			// sums[3][1] = kernel::create(s31);
 			// sums[4][1] = kernel::create(s41);
 			// sums[5][1] = kernel::create(s51);
-			sums[6][1] = kernel::create(s61);
-			sums[7][1] = kernel::create(s71);
+			// sums[6][1] = kernel::create(s61);
+			// sums[7][1] = kernel::create(s71);
 			// sums[8][1] = kernel::create(s81); // UNUSED
 
 			auto mmulUnusedKernels = std::vector<std::tuple<int,int>>{
-				{3,1}, {4,1}, {5,1}
+				{1,0}, {2,0}, {6,0}, {7,0},
+				{1,1}, {2,1}, {3,1}, {4,1}, {5,1}, {6,1}, {7,1}
 			};
 			auto sumUnusedKernels = std::vector<std::tuple<int,int>>{
-				{2,1}, {3,1}, {4,1}, {5,1}, {8,1}, {3,0}, {4,0}, {5,0}
+				{1,0}, {2,0}, {3,0}, {4,0}, {5,0}, {6,0}, {7,0},
+				{1,1}, {2,1}, {3,1}, {4,1}, {5,1}, {6,1}, {7,1}, {8,1}
 			};
 
 	
 			// Kernel connections
 			connect< window<2*128*1> >  (A        .out[0], mmuls[0][0].in[0]);
 			connect< window<2*128*1> >  (A        .out[0], mmuls[0][1].in[0]);
-			for(int i = 0; i < 2; i++){
-				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
-				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
-
-				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
-				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
-
-				connect< window<2*128*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
-				connect< window<2*128*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
-			}
-			connect< window<2*128*1> >  (mmuls[2][0].out[0], sums[2][0].in[0]);
-			connect< window<2*128*1> >  (mmuls[2][1].out[0], sums[2][0].in[1]);
-			connect< window<2*128*1> >  (sums[2][0].out[0], mmuls[3][0].in[0]);
-
-			/*
-			for(int i = 3; i < 5; i++){
-				connect< window<2*  8*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
-				connect< window<2*  8*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
-
-				connect< window<2*  8*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
-				connect< window<2*  8*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
-
-				connect< window<2*  8*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
-				connect< window<2*  8*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
-			}
-			*/
+			
+			connect< window<2*128*1> >  (mmuls[0][0].out[0], sums[0][0].in[0]);
+			connect< window<2*128*1> >  (mmuls[0][1].out[0], sums[0][0].in[1]);
+			connect< window<2*128*1> >  (sums[0][0].out[0], mmuls[3][0].in[0]);
+			
 			connect< window<2*  8*1> >  (mmuls[3][0].out[0], mmuls[4][0].in[0]);
 			connect< window<2*  8*1> >  (mmuls[4][0].out[0], mmuls[5][0].in[0]);
-			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][0].in[0]);
-			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][1].in[0]);
-			
-			for(int i = 6; i < 8; i++){
-				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][0].in[0]);
-				connect< window<2*128*1> >  (mmuls[i][0].out[0], sums[i][1].in[1]);
-
-				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][0].in[1]);
-				connect< window<2*128*1> >  (mmuls[i][1].out[0], sums[i][1].in[0]);
-
-				connect< window<2*128*1> >  (sums[i][0].out[0], mmuls[i+1][0].in[0]);
-				connect< window<2*128*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
+			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[8][0].in[0]);
+			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[8][1].in[0]);
 			}
 			connect< window<2*128*1> >  (mmuls[8][0].out[0], sums[8][0].in[0]);
 			connect< window<2*128*1> >  (mmuls[8][1].out[0], sums[8][0].in[1]);
