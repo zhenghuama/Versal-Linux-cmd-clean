@@ -64,9 +64,6 @@ class ParallelMMUlGraph : public adf::graph {
 			A = input_plio::create(plio_128_bits, "data/matA0.txt");
 			C = output_plio::create(plio_128_bits, "data/matC0.txt");
 
-			location<plio>(A) = tile(0, 0);
-			location<plio>(C) = tile(4, 0);
-
 			// kernels creation
 			mmuls[0][0] = kernel::create(p00);
 			location<kernel>(mmuls[0][0]) = tile(2, 0);
