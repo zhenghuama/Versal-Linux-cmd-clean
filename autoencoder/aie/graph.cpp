@@ -168,7 +168,7 @@ class ParallelMMUlGraph : public adf::graph {
 				connect< window<2*  8*1> >  (sums[i][1].out[0], mmuls[i+1][1].in[0]);
 			}
 			*/
-			connect< window<2*  8*1> >  (mmuls[3][0].out[0], mmuls[4][0].in[0]);
+			connect< window<2*  128*1> >  (mmuls[3][0].out[0], mmuls[4][0].in[0]);
 			connect< window<2*  8*1> >  (mmuls[4][0].out[0], mmuls[5][0].in[0]);
 			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][0].in[0]);
 			connect< window<2*  128*1> >  (mmuls[5][0].out[0], mmuls[6][1].in[0]);
@@ -193,11 +193,11 @@ class ParallelMMUlGraph : public adf::graph {
 					auto t = std::tuple<int, int>{i, j};
 					if(std::find(mmulUnusedKernels.begin(), mmulUnusedKernels.end(), t) == mmulUnusedKernels.end()){
 						source(mmuls[i][j]) = "autoenc.cc";
-						runtime<ratio>(mmuls[i][j]) = 0.1;
+						runtime<ratio>(mmuls[i][j]) = 0.2;
 					}
 					if(std::find(sumUnusedKernels.begin(), sumUnusedKernels.end(), t) == sumUnusedKernels.end()){
 						source(sums[i][j]) = "autoenc.cc";
-						runtime<ratio>(sums[i][j]) = 0.1;
+						runtime<ratio>(sums[i][j]) = 0.2;
 					}
 				}
 			}
@@ -218,7 +218,7 @@ int main(void) {
 	*/
 	
 	myParallelGraph.init();
-  	myParallelGraph.run(10);
+  	myParallelGraph.run(5);
   	myParallelGraph.end();
 	
 	
